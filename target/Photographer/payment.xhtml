@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Payment Page</title>
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&amp;display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0ecf8, #f7fafd);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .payment-box {
+            background: white;
+            width: 400px;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
+        }
+
+        .header h2 {
+            margin: 0;
+            color: #0066cc;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .amount-section {
+            text-align: right;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #0066cc;
+            font-size: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 16px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background: #f9f9f9;
+            margin-right: 5px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .tab:hover {
+            background: #e6f0ff;
+        }
+
+        .tab.active {
+            background: white;
+            font-weight: 600;
+            color: #0066cc;
+            border-color: #0066cc;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #0066cc;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,102,204,0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            border: none;
+            color: white;
+            font-size: 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="payment-box">
+    <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Razorpay_logo.png" alt="Logo" />
+        <h2>Secure Payment</h2>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('card')">Card</div>
+        <div class="tab" onclick="showTab('netbanking')">Net Banking</div>
+        <div class="tab" onclick="showTab('wallet')">Wallet</div>
+        <div class="tab" onclick="showTab('upi')">UPI</div>
+    </div>
+
+    <div id="card" class="form-section active">
+        <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" placeholder="xxxx xxxx xxxx xxxx" />
+        </div>
+        <div class="form-group">
+            <label>Name on Card</label>
+            <input type="text" placeholder="Card Holder Name" />
+        </div>
+        <div class="form-group">
+            <label>Expiry Date</label>
+            <input type="text" placeholder="MM/YY" />
+        </div>
+        <div class="form-group">
+            <label>CVV</label>
+            <input type="password" placeholder="***" />
+        </div>
+    </div>
+
+    <div id="netbanking" class="form-section">
+        <div class="form-group">
+            <label>Select Bank</label>
+            <select>
+                <option>HDFC Bank</option>
+                <option>ICICI Bank</option>
+                <option>SBI</option>
+                <option>Axis Bank</option>
+                <option>Kotak Bank</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="wallet" class="form-section">
+        <div class="form-group">
+            <label>Choose Wallet</label>
+            <select>
+                <option>Paytm</option>
+                <option>PhonePe</option>
+                <option>Mobikwik</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="upi" class="form-section">
+        <div class="form-group">
+            <label>UPI ID</label>
+            <input type="text" placeholder="example@upi" />
+        </div>
+    </div>
+
+    <div id="info" style="font-size: 13px"></div>
+    <button id="payButton" onclick="makePayment()"></button>
+
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); backdrop-filter: blur(5px); z-index: 9998;"></div>
+
+    <div id="successPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); padding: 30px 50px; text-align: center; z-index: 9999;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="#28a745" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.97 11.03a.75.75 0 0 0 1.07 0l4-4a.75.75 0 1 0-1.06-1.06L7.5 9.44 5.53 7.47a.75.75 0 0 0-1.06 1.06l2.5 2.5z"/>
+        </svg>
+        <p style="color:#28a745; font-weight:600; font-size:20px;">Payment Successful!</p>
+        <button onclick="goHome()" style="margin-top: 15px; padding: 10px 20px; background: #28a745; border: none; color: white; border-radius: 6px; font-size: 16px; cursor: pointer;">OK</button>
+    </div>
+</div>
+
+<script>
+    let selectedPaymentMethod = "Credit Card";
+    let photographerID = 0;
+    let date = "";
+
+    function showTab(tabName) {
+        let tabs = document.querySelectorAll('.tab');
+        let forms = document.querySelectorAll('.form-section');
+        tabs.forEach(tab => {
+            tab.classList.remove('active');
+        });
+        forms.forEach(form => {
+            form.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+
+        if (tabName === 'card') selectedPaymentMethod = "Credit Card";
+        else if (tabName === 'netbanking') selectedPaymentMethod = "Bank Transfer";
+        else if (tabName === 'wallet') selectedPaymentMethod = "PayPal";
+        else if (tabName === 'upi') selectedPaymentMethod = "Bank Transfer";
+    }
+
+    function getParam(name) {
+        return new URLSearchParams(window.location.search).get(name);
+    }
+
+    let userID = parseInt(getParam('userId') || "0");
+    let bookingID = parseInt(getParam('bookingId') || "0");
+
+    fetch("http://localhost:8080/Photographer/api/bookings/" + bookingID)
+        .then(res => res.json())
+        .then(booking => {
+            userID = booking.userID;
+            photographerID = booking.photographerID;
+            date = booking.bookingDate;
+
+            return fetch("http://localhost:8080/Photographer/api/photographers/" + photographerID);
+        })
+        .then(res => res.json())
+        .then(photographer => {
+            let serviceCharge = photographer.serviceCharge;
+            let platformFee = serviceCharge * 0.12;
+            let totalPayable = serviceCharge + platformFee;
+
+            document.getElementById('info').innerHTML =
+                `<p><strong>Photographer Charge:</strong> ₹ ${serviceCharge.toFixed(2)}</p>
+                 <p><strong>Platform Fee (12%):</strong> ₹ ${platformFee.toFixed(2)}</p>
+                 <p><strong>Total Payable:</strong> ₹ ${totalPayable.toFixed(2)}</p>`;
+            document.getElementById('payButton').innerText = "Pay ₹ " + totalPayable.toFixed(2);
+        });
+
+    function makePayment() {
+        const payload = {
+            bookingID: bookingID,
+            userID: userID,
+            paymentMethod: selectedPaymentMethod,
+            paymentStatus: "Completed"
+        };
+        console.log(payload)
+        fetch('http://localhost:8080/Photographer/api/payments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            const updatePayload = {
+                bookingID,
+                userID,
+                photographerID,
+                status: "Confirmed",
+                paymentStatus: "Paid",
+                bookingDate: date
+            };
+            console.log(updatePayload);
+            return fetch("http://localhost:8080/Photographer/api/bookings/" + bookingID, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatePayload)
+            });
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Booking update failed.");
+          showSuccessPopup()
+        })
+        .catch(err => {
+            alert("Payment succeeded but booking update failed!");
+            console.error(err);
+        });
+    }
+
+    function showSuccessPopup() {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("successPopup").style.display = "block";
+    }
+
+    function goHome() {
+        window.location.href = "http://localhost:8080/Photographer";
+    }
+</script>
+</body>
+</html>

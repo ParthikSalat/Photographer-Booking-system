@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Update Photographer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .container h2 {
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="url"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body onload="fetchPhotographer()">
+
+  <div class="container">
+    <h2>Update Photographer Profile</h2>
+    <form onsubmit="updatePhotographer(event)">
+      <div class="form-group">
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" required="true" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required="true" />
+      </div>
+
+      <div class="form-group">
+        <label for="passwordHash">Password:</label>
+        <input type="password" id="passwordHash" required="true" />
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" />
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <input type="text" id="address" />
+      </div>
+
+      <div class="form-group">
+        <label for="experienceYears">Experience Years:</label>
+        <input type="number" id="experienceYears" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="specialization">Specialization:</label>
+        <input type="text" id="specialization" />
+      </div>
+
+      <div class="form-group">
+        <label for="portfolioURL">Portfolio URL:</label>
+        <input type="url" id="portfolioURL" />
+      </div>
+
+      <div class="form-group">
+        <label for="serviceCharge">Service Charge:</label>
+        <input type="number" id="serviceCharge" step="0.01" min="0" />
+      </div>
+
+      <button type="submit">Update</button>
+    </form>
+  </div>
+
+  <script>
+    async function fetchPhotographer() {
+      const id = localStorage.getItem("photographerId");
+      const token = localStorage.getItem("jwtToken");
+
+      if (!id || !token) {
+        alert("Photographer ID or JWT Token not found!");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/Photographer/api/photographers/" + id, {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch photographer data.");
+        }
+
+        const data = await response.json();
+
+        document.getElementById("fullName").value = data.fullName || "";
+        document.getElementById("email").value = data.email || "";
+        document.getElementById("passwordHash").value = data.passwordHash || "";
+        document.getElementById("phoneNumber").value = data.phoneNumber || "";
+        document.getElementById("address").value = data.address || "";
+        document.getElementById("experienceYears").value = data.experienceYears || 0;
+        document.getElementById("specialization").value = data.specialization || "";
+        document.getElementById("portfolioURL").value = data.portfolioURL || "";
+        document.getElementById("serviceCharge").value = data.serviceCharge || 0;
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    async function updatePhotographer(event) {
+      event.preventDefault();
+
+      const id = localStorage.getItem("photographerId");
+      const token = localStorage.getItem("jwtToken");
+
+      if (!id || !token) {
+        alert("Photographer ID or JWT Token not found!");
+        return;
+      }
+
+      const payload = {
+        fullName: document.getElementById("fullName").value,
+        email: document.getElementById("email").value,
+        passwordHash: document.getElementById("passwordHash").value,
+        phoneNumber: document.getElementById("phoneNumber").value,
+        address: document.getElementById("address").value,
+        experienceYears: parseInt(document.getElementById("experienceYears").value),
+        specialization: document.getElementById("specialization").value,
+        portfolioURL: document.getElementById("portfolioURL").value,
+        serviceCharge: parseFloat(document.getElementById("serviceCharge").value)
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/Photographer/api/photographers/" + id, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          alert("Photographer updated successfully!");
+          // Redirect to the profile page
+          window.location.href = "photographerProfile.xhtml";
+        } else {
+          throw new Error("Failed to update photographer.");
+        }
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  </script>
+</body>
+</html>

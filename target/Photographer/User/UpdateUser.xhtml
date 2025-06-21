@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Edit User</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #f0f8ff);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .edit-card {
+      background: #ffffff;
+      padding: 35px 30px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .edit-header {
+      text-align: center;
+      font-size: 28px;
+      color: #00acc1;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #00acc1;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.2);
+    }
+
+    .btn-custom {
+      background-color: #00acc1;
+      color: white;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-custom:hover {
+      background-color: #008c99;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media screen and (max-width: 600px) {
+      .edit-card {
+        padding: 25px 20px;
+      }
+    }
+  </style>
+
+  <script type="text/javascript">
+    async function updateUser(event, userId) {
+      event.preventDefault();
+
+      const user = {
+        fullName: document.getElementById("fullName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        passwordHash: document.getElementById("password").value.trim(),
+        phoneNumber: document.getElementById("phoneNumber").value.trim(),
+        address: document.getElementById("address").value.trim()
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/Photographer/api/users/" + userId, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+        });
+
+        const result = await response.text();
+        alert(result);
+
+        if (response.ok) {
+          window.location.href = "/Photographer/User/Profile.xhtml";
+        }
+      } catch (err) {
+        alert("Error updating user: " + err.message);
+      }
+    }
+
+    function loadUserData(userId) {
+      fetch("http://localhost:8080/Photographer/api/users/userId/" + userId)
+        .then(response => {
+          if (!response.ok) throw new Error("User not found");
+          return response.json();
+        })
+        .then(user => {
+          document.getElementById("fullName").value = user.fullName || '';
+          document.getElementById("email").value = user.email || '';
+          document.getElementById("password").value = user.passwordHash || '';
+          document.getElementById("phoneNumber").value = user.phoneNumber || '';
+          document.getElementById("address").value = user.address || '';
+        })
+        .catch(err => alert("Error loading user: " + err.message));
+    }
+
+    window.onload = () => {
+      const userId = localStorage.getItem("userId");
+
+      if (userId) {
+        loadUserData(userId);
+        document.getElementById("updateForm").addEventListener("submit", function (e) {
+          updateUser(e, userId);
+        });
+      } else {
+        alert("User ID not found in local storage.");
+        window.location.href = "/Photographer/User/Login.xhtml";
+      }
+    };
+  </script>
+</head>
+
+<body>
+  <div class="edit-card">
+    <div class="edit-header">Edit User Profile</div>
+    <form id="updateForm">
+      <label for="fullName">Full Name:</label>
+      <input type="text" id="fullName" name="fullName" required="true" />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required="true" />
+
+      <input type="hidden" id="password" name="password" />
+
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="text" id="phoneNumber" name="phoneNumber" />
+
+      <label for="address">Address:</label>
+      <input type="text" id="address" name="address" />
+
+      <button type="submit" class="btn-custom">Update User</button>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,234 @@
+    <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <head>
+        <title>Book Date</title>
+          <link rel="icon" type="image/png" href="images/logo.png" style="height: 200px;width: 200px;"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <!-- ✅ Bootstrap 5 CDN -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+        <style>
+            body {
+                background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: #fff;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+            }
+            .photographer-card img {
+                width: 100%;
+                height: auto;
+                border-radius: 10px;
+                margin-bottom: 10px;
+            }
+            .other-images img {
+                width: 150px;
+                height: 150px;
+                border-radius: 10px;
+                margin: 10px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            }
+        </style>
+
+        <script>
+            window.onload = async function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const photographerId = urlParams.get("photographerId");
+                const imageId = urlParams.get("imageId");
+                console.log(photographerId)
+                
+                if (!photographerId || !imageId) {
+                    alert("Missing photographerId or imageId in URL");
+                    return;
+                }
+
+                document.getElementById("photographerId").value = photographerId;
+
+                // Fetch photographer details
+                try {
+                    const response = await fetch("http://localhost:8080/Photographer/api/photographers/" + photographerId);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        alert("Error: " + errorText);
+                        return;
+                    }
+                    const photographer = await response.json();
+
+                    document.getElementById("fullName").innerText = photographer.fullName;
+                    document.getElementById("email").innerText = photographer.email;
+                    document.getElementById("phone").innerText = photographer.phoneNumber;
+                    document.getElementById("experience").innerText = photographer.experienceYears;
+                    document.getElementById("specialization").innerText = photographer.specialization;
+                    document.getElementById("serviceCharge").innerText = photographer.serviceCharge;
+                    if (photographer.portfolioURL) {
+                        const img = document.createElement("img");
+                        img.src = photographer.portfolioURL;
+                        img.style = "width:200px;height:200px";
+                        document.getElementById("photos").appendChild(img);
+                    }
+                } catch (e) {
+                  //  alert("Error fetching photographer: " + e);
+                }
+
+                // Fetch selected image
+                try {
+                    const imgResponse = await fetch("http://localhost:8080/Photographer/api/gallery/" + imageId);
+                    if (!imgResponse.ok) {
+                        const errorText = await imgResponse.text();
+                        alert("Error loading image: " + errorText);
+                        return;
+                    }
+                    const imageData = await imgResponse.json();
+
+                    const imgDiv = document.getElementById("selectedImage");
+                    const image = document.createElement("img");
+                    image.src = imageData.imageURL;
+                    image.classList.add("img-fluid", "rounded");
+                    image.style = "width:100%;max-width:300px";
+                    imgDiv.appendChild(image);
+                } catch (e) {
+                    alert("Error fetching image: " + e);
+                }
+
+               // ✅ Fetch all other images of the photographer
+    try {
+        const galleryResponse = await fetch("http://localhost:8080/Photographer/api/gallery/photographer/" + photographerId);
+        if (!galleryResponse.ok) {
+            const errorText = await galleryResponse.text();
+            alert("Error loading gallery images: " + errorText);
+            return;
+        }
+        const allImages = await galleryResponse.json();
+
+        const galleryDiv = document.getElementById("otherImages");
+
+        allImages.forEach(image => {
+            if (image.imageID != imageId) { // ✅ Skip the selected image
+
+                const colDiv = document.createElement("div");
+                colDiv.className = "col-md-3 col-sm-4 col-6 mb-3";  // Responsive columns
+
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "card h-100 shadow-sm";
+
+                const img = document.createElement("img");
+                img.src = image.imageURL;
+                img.className = "card-img-top";
+                img.style = "height:150px; object-fit:cover;";
+
+                cardDiv.appendChild(img);
+                colDiv.appendChild(cardDiv);
+                galleryDiv.appendChild(colDiv);
+            }
+        });
+
+    } catch (e) {
+        alert("Error fetching gallery images: " + e);
+    }
+
+            }
+
+            async function submitBooking() {
+    const bookingDate = document.getElementById("bookingDate").value + "T00:00:00";
+    const photographerId = document.getElementById("photographerId").value;
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+        alert("Please login first.");
+        window.location.href = "User/Login.xhtml";
+        return;
+    }
+
+    const bookingData = {
+        bookingDate: bookingDate,
+        status: "Pending",
+        paymentStatus: "Pending",
+        userID: parseInt(userId),
+        photographerID: parseInt(photographerId)
+    };
+    console.log(bookingData);
+    try {
+        const response = await fetch("http://localhost:8080/Photographer/api/bookings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bookingData)
+        });
+
+        if (response.ok) {
+            const data = await response.json();  // ✅ Parse JSON correctly
+            const bookingId = data.bookingId;   // ✅ Extract `BookingID`
+
+            // ✅ Store bookingId and redirect to Payment.xhtml
+            sessionStorage.setItem("bookingId", bookingId);
+            alert("Booking Thai gai che bhaii");
+            window.location.href = "payment.xhtml?bookingId=" + bookingId + "&amp;userId=" + userId;
+        } else {
+            const errorMsg = await response.text();
+            alert("Booking failed: " + errorMsg);
+        }
+    } catch (err) {
+        alert("Error: " + err);
+    }
+}
+        </script>
+    </head>
+
+    <body>
+
+    <div class="container">
+
+        <h1 class="my-4 text-center text-primary">Photographer Booking Page</h1>
+
+        <!-- ✅ Navigation Buttons -->
+        <div class="mb-4 d-flex justify-content-between">
+            <button class="btn btn-secondary" onclick="history.back()">← Go Back</button>
+            <button class="btn btn-primary" onclick="window.location.href='home.xhtml'">🏠 Home</button>
+        </div>
+
+        <div class="card shadow p-4 mb-4 bg-white">
+            <div class="row align-items-center">
+                <!-- Left: Selected Image -->
+                <div class="col-md-5 text-center">
+                    <div id="selectedImage"></div>
+                </div>
+
+                <!-- Right: Photographer Details -->
+                <div class="col-md-7">
+                    <h3>Photographer Details</h3>
+                    <p><strong>Name:</strong> <span id="fullName"></span></p>
+                    <p><strong>Email:</strong> <span id="email"></span></p>
+                    <p><strong>Phone:</strong> <span id="phone"></span></p>
+                    <p><strong>Experience:</strong> <span id="experience"></span> years</p>
+                    <p><strong>Specialization:</strong> <span id="specialization"></span></p>
+                     <p><strong>Service Charge</strong> <span id="serviceCharge"></span>/-</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow p-4 mb-4 bg-white">
+            <h3 class="text-center">Booking Form</h3>
+            <h:form onsubmit="submitBooking(); return false;">
+                <input type="hidden" id="photographerId" />
+                <div class="mb-3">
+                    <label class="form-label">Booking Date:</label>
+                    <input type="date" id="bookingDate" required="true" class="form-control"/>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-success">Book Now</button>
+                </div>
+            </h:form>
+        </div>
+
+        <div class="card shadow p-4 bg-white">
+            <h4>Other Images by Photographer</h4>
+            <div id="otherImages" class="row"></div>
+        </div>
+
+    </div>
+
+</body>
+
+    </html>

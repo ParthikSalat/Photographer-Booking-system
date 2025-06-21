@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Photographer Gallery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .upload-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="container mt-4">
+
+        <!-- Button to show upload form -->
+        <div class="text-center mb-4">
+            <button class="btn btn-outline-primary" onclick="toggleUpload()">Add New Image</button>
+        </div>
+
+        <!-- Upload Section (Initially Hidden) -->
+        <div class="upload-container" id="uploadSection">
+            <h2>Upload Gallery Image</h2>
+            <h:form enctype="multipart/form-data" id="uploadForm">
+                <div class="mb-3">
+                    <label class="form-label">Select Image:</label>
+                    <h:inputFile value="#{galleryUploadBean.file}" styleClass="form-control" />
+                </div>
+                <div class="mb-3">
+<!--                    <label class="form-label">Photographer ID:</label>-->
+                  <h:inputHidden id="photographerInput" value="#{galleryUploadBean.photographerId}" />
+
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    var input = document.getElementById('photographerInput');
+    if (input) {
+      localStorage.setItem('photographerId', input.value);
+    }
+  });
+</script>
+
+                </div>
+                <div class="d-grid">
+                    <h:commandButton value="Upload"
+                                     action="#{galleryUploadBean.upload}"
+                                     styleClass="btn btn-success" />
+                </div>
+            </h:form>
+        </div>
+
+        <!-- Gallery Section -->
+        <div class="mt-5">
+            <h2>Photographer Gallery</h2>
+            <h:form id="galleryForm">
+                <h:inputHidden id="photographerIdInput" value="#{galleryListBean.photographerId}" />
+                <div class="mb-3">
+                    <h:commandButton value="Load Your edited Images"
+                                     action="#{galleryListBean.loadPhotographerImages}"
+                                     styleClass="btn btn-primary" />
+                </div>
+            </h:form>
+
+            <div class="row">
+                <ui:repeat value="#{galleryListBean.galleryImages}" var="img">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="#{img.imagePath}" class="card-img-top" alt="Gallery Image" />
+                        </div>
+                    </div>
+                </ui:repeat>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+  <script>
+    // Show/hide the upload form
+    function toggleUpload() {
+        const section = document.getElementById("uploadSection");
+        section.style.display = section.style.display === "none" ? "block" : "none";
+
+        const pid = localStorage.getItem("photographerId");
+        if (pid) {
+            const input = document.getElementById("uploadForm:photographerInput");
+            if (input) input.value = pid;
+        }
+    }
+
+    // Auto-fill hidden input, but don't auto-submit
+    window.onload = function () {
+        const pid = localStorage.getItem("photographerId");
+        if (pid) {
+            const hiddenInput = document.getElementById("galleryForm:photographerIdInput");
+            if (hiddenInput) hiddenInput.value = pid;
+        }
+
+        // OPTIONAL: only auto-submit first time using a flag
+        if (!sessionStorage.getItem("galleryLoaded")) {
+            sessionStorage.setItem("galleryLoaded", "true");
+            document.getElementById("galleryForm").submit();
+        }
+    };
+</script>
+
+</h:body>
+</html>

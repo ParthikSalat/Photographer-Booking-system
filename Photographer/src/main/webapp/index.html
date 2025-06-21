@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+    <title>Always For You - Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: #006666;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar button {
+            background-color: #006666;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .navbar button:hover {
+            background-color: #004d4d;
+            transform: scale(1.05);
+        }
+
+        .hero-banner {
+            background-color: #e0f7fa;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero-banner h1 {
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .hero-banner p {
+            font-size: 20px;
+            color: #555;
+        }
+
+        .book-button {
+            display: inline-block;
+            padding: 14px 28px;
+            font-size: 20px;
+            background-color: #00acc1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .book-button:hover {
+            background-color: #008c99;
+            transform: scale(1.05);
+        }
+
+        .how-it-works {
+            background-color: #e0fdfb;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .how-it-works h2 {
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .step {
+            background-color: white;
+            border: 2px solid #b2ebf2;
+            padding: 30px;
+            width: 280px;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .step i {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: #00acc1;
+        }
+
+        .step h4 {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .step button {
+            background-color: #00acc1;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .step button:hover {
+            background-color: #008c99;
+            transform: scale(1.05);
+        }
+
+        .footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</h:head>
+<h:body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div><strong>BookMyShoot</strong></div>
+        <div>
+            <button onclick="window.location.href='index.xhtml'">Home</button>
+            <button onclick="window.location.href='photographers/Create.xhtml'">Register as Photographer</button>
+            <button onclick="window.location.href='gallery/Create.xhtml'">Gallery</button>
+            <button onclick="window.location.href='User/Login.xhtml'">Login</button>
+            <button onclick="window.location.href='admins/Adminlogin.xhtml'">Admin</button>
+        </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="hero-banner">
+        <h1>Book a photographer</h1>
+        <p>Find the best photographers for weddings, events, and more.</p>
+        <a class="book-button" href="#">Book a photographer</a>
+    </div>
+
+    <!-- How It Works -->
+    <div class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <i class="fas fa-search"></i>
+                <h4>Search</h4>
+                <p>Search for photographers based on location, category, and budget.</p>
+                <button onclick="window.location.href='#'">Learn More</button>
+            </div>
+            <div class="step">
+                <i class="fas fa-heart"></i>
+                <h4>Shortlist</h4>
+                <p>Shortlist your favorites and compare based on reviews and portfolios.</p>
+                <button onclick="window.location.href='#'">Learn More</button>
+            </div>
+            <div class="step">
+                <i class="fas fa-calendar-check"></i>
+                <h4>Book</h4>
+                <p>Finalize and book your photographer easily through our platform or WhatsApp.</p>
+                <button onclick="window.location.href='#'">Learn More</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+<!--    <div class="footer">
+        © Copyright - <strong>Photomatic</strong>
+    </div>-->
+
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+</h:body>
+</html>

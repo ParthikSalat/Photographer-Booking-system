@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+           background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+     
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .container {
+            animation: fadeIn 0.6s ease-in-out;
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin: 150px auto;
+            position: relative; /* Needed for positioning X button */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Close (X) button */
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #007B8A;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #007B8A;
+            outline: none;
+        }
+
+        input[type="submit"],
+        .btn-login {
+            width: 100%;
+            background: #007B8A;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover,
+        input[type="submit"]:hover {
+            background: #005f6b;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .success-message {
+            color: green;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        a {
+            color: #007B8A;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive tweaks */
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+        }/* Shake animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+}
+
+.shake {
+    animation: shake 0.4s;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+       <span class="close-btn" title="Go Back">×</span>
+
+        <h2>User Login</h2>
+
+        <div id="message"></div>
+
+        <form id="loginForm">
+            <label for="email">Username</label>
+            <input type="text" id="email" name="email" placeholder="Enter your username" required="required" />
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required="required" />
+
+            <input type="submit" value="Login" class="btn-login" />
+        </form>
+
+        <p style="margin-top: 15px;">
+            Don't have an account? 
+            <a href="/Photographer/User/Register.xhtml" style="color: blue; text-decoration: underline;">Register here</a>
+        </p>
+    </div>
+
+   <script>
+    // Close button event — goes back in history
+    document.querySelector('.close-btn').addEventListener('click', () => {
+        window.location.href = '/Photographer/home.xhtml';
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        // Clear previous messages
+        document.getElementById("message").innerHTML = "";
+
+        fetch("http://localhost:8080/Photographer/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                passwordHash: password
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(error => {
+                    // Trigger shake animation
+                    const container = document.querySelector('.container');
+                    container.classList.add('shake');
+
+                    setTimeout(() => container.classList.remove('shake'), 600);
+
+                    let errorMsg = error.includes("email") ? "Invalid username." :
+                                   error.includes("password") ? "Incorrect password." :
+                                   "Invalid login details.";
+
+                    document.getElementById("message").innerHTML =
+                        `<p class="error-message">${errorMsg}</p>`;
+
+                    throw new Error(errorMsg);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("JWT Token:", data.token);
+            localStorage.setItem("jwtToken", data.token);
+
+            document.getElementById("message").innerHTML =
+                `<p class="success-message">Login successful! Redirecting...</p>`;
+
+            setTimeout(() => {
+                window.location.href = "http://localhost:8080/Photographer/home.xhtml";
+            }, 1000);
+        })
+        .catch(error => {
+            console.error("Login error:", error.message);
+        });
+    });
+</script>
+
+</body>
+</html>

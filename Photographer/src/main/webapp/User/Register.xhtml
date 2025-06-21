@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>User Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .form-header p {
+            color: #666;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        /* Make the address textarea span both columns */
+        #address {
+            grid-column: span 2;
+        }
+
+        .form-actions {
+            grid-column: span 2;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            background-color: #007B8A;
+            color: white;
+            font-weight: bold;
+            padding: 12px 30px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .action-button:hover {
+            background-color: #005f6b;
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <script type="text/javascript">
+        async function registerUser(event) {
+            event.preventDefault();
+
+            const user = {
+                fullName: document.getElementById("fullName").value,
+                email: document.getElementById("email").value,
+                passwordHash: document.getElementById("password").value,
+                phoneNumber: document.getElementById("phoneNumber").value,
+                address: document.getElementById("address").value
+            };
+
+            try {
+                const response = await fetch('/Photographer/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                const message = await response.text();
+                alert(message);
+            } catch (error) {
+                alert("Error: " + error);
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Create Your Account 👤</h2>
+            <p>Join us today and get started!</p>
+        </div>
+
+        <form onsubmit="registerUser(event)">
+            <div>
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" required="required" />
+            </div>
+
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" required="required" />
+            </div>
+
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" required="required" />
+            </div>
+
+            <div>
+                <label for="phoneNumber">Phone Number</label>
+                <input type="text" id="phoneNumber" />
+            </div>
+
+            <div>
+                <label for="address">Address</label>
+                <textarea id="address" rows="4"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="action-button">Register</button>
+                <button type="reset" class="action-button" style="background-color: #555;">Reset</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

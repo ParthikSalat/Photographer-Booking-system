@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>
+        Book Photographer</title>
+    <link rel="icon" type="image/png" href="images/logo.jpg" style="height: 200px;width: 200px;"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/photo.css" />
+     <link rel="stylesheet" href="css/home.css" />
+         <link rel="stylesheet" href="css/contactus.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+ <link rel="stylesheet" href="css/contactus.css" />
+  
+
+</h:head>
+
+<h:body>
+
+    <!-- Navbar -->
+ <!-- Navbar -->
+<div class="navbar" >
+
+    <!-- Logo -->
+    <div class="logo" style="display: flex; align-items: center; padding-left: 35px; ">
+        <a href="index.xhtml">
+            <img src="images/logo.jpg" alt="Logo" style="
+                 
+                height: 45px;
+                width: 45px;
+                border-radius: 50%;
+                object-fit: cover;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            " />
+        </a>
+    </div>
+
+    <!-- Navigation Links -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+       <a href="home.xhtml"><i class="fas fa-home"></i> Home</a>
+        <a href="#about"><i class="fas fa-info-circle"></i> About Us</a>
+        <a href="#contact"><i class="fas fa-envelope"></i> Contact Us</a>
+         <a href="#gallery"><i class="fas fa-images"></i> Gallery</a>
+<span id="guestLinks" style="display: flex; gap: 5px;">
+    
+    <a href="Photographer/Login.xhtml"><i class="fas fa-camera-retro"></i> Register as Photographer</a>
+   
+    
+    <a href="adminLogin.xhtml"><i class="fas fa-user-shield"></i> Admin</a>
+    <a href="User/Login.xhtml"><i class="fas fa-sign-in-alt"></i> Login</a>
+</span>
+
+
+        <span id="userPanel" style="display: none;">
+            <a id="welcomeUser" href="#" style="color: white;"></a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </span>
+    </div>
+
+</div>
+
+
+    <!-- Slider Section -->
+    <div class="slider-container">
+        <div class="slides">
+            <div class="slide" style="background-image: url('images/slider1.jpg');"></div>
+            <div class="slide" style="background-image: url('images/slider2.jpg');"></div>
+            <div class="slide" style="background-image: url('images/new2.jpeg');"></div>
+        </div>
+        <div class="dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div id="about"></div>
+    <div id="about-section">
+        <div>
+            <img src="images/about-img.jpg" alt="Photographer" />
+        </div>
+        <div>
+            <h2>We Believe that <br />Interior beautifies the</h2>
+            <p>
+                Sometimes, casual remarks or behaviors are brushed off, while others face higher expectations—
+                particularly in professional environments. It’s essential to maintain respectful standards and
+                create inclusive spaces for everyone.
+            </p><br></br>
+            <a href="#">HIRE ME NOW</a>
+        </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <!-- Gallery Section -->
+<div id='gallery'></div>
+<div>
+   
+    <!--filter mate comment -->
+    <ui:include src="demo.xhtml" />
+
+     
+</div>
+
+
+    <!-- Modal -->
+    <div id="imageModal" class="modal" role="dialog" aria-modal="true" tabindex="-1">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal">&#xD7;</button>
+            <img id="modalImg" class="modal-image" src="" alt="" />
+            <div id="modalDetails" class="modal-details"></div>
+        </div>
+    </div>
+    <div id='contact'></div>
+     <div class="contact-wrapper">
+        <div class="form-section">
+            <h1>Contact Us</h1>
+            <p>Have questions about bookings or packages? Drop us a message below!</p>
+            <h:form>
+                <div class="form-group">
+                    <input type="email" class="input-field" placeholder="Your Email Address" />
+                    <input type="text" class="input-field" placeholder="Your Full Name" />
+                </div>
+                <h:commandButton value="Submit" styleClass="submit-btn" />
+            </h:form>
+        </div>
+
+        <div class="info-section">
+            <div class="info-box">
+                <div class="icon">📸</div>
+                <h3>ABOUT STUDIO</h3>
+                <p>Professional photography services<br />Weddings, Events and Portraits</p>
+            </div>
+
+            <div class="info-box">
+                <div class="icon">📞</div>
+                <h3>CONTACT NUMBER</h3>
+                <p>+1 800 123 4567<br />+1 800 987 6543</p>
+            </div>
+
+            <div class="info-box">
+                <div class="icon">🏢</div>
+                <h3>STUDIO LOCATION</h3>
+                <p>PixelFrame Photography Studio<br />
+                   123 Shutter St, Downtown LA, California, USA</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                return null;
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+        const spans = document.querySelectorAll('[id^="photographer-"]');
+
+        spans.forEach(span => {
+            const photographerId = span.id.split('-')[1];
+            
+            fetch("http://localhost:8080/Photographer/api/photographers/" + photographerId + "/name")
+                .then(response => response.text())
+                .then(name => {
+                    span.textContent = name;
+                })
+                .catch(err => {
+                    span.textContent = "Unknown";
+                    console.error("Failed to load name for photographer ID:", photographerId);
+                });
+        });
+    });
+
+        window.onload = function () {
+            const token = localStorage.getItem("jwtToken");
+            const guestLinks = document.getElementById("guestLinks");
+            const userPanel = document.getElementById("userPanel");
+            const welcomeEl = document.getElementById("welcomeUser");
+
+            if (token) {
+                const payload = parseJwt(token);
+                if (payload) {
+                    const name = payload.sub;
+                    const userId = payload.id;
+                    localStorage.setItem('userId', userId);
+                    localStorage.setItem('userName', name);
+
+                    welcomeEl.href = `User/Profile.xhtml`;
+                    welcomeEl.textContent = `Welcome, ` + name;
+
+                    guestLinks.style.display = "none";
+                    userPanel.style.display = "flex";
+
+                    document.getElementById("logoutBtn").onclick = function () {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        location.reload();
+                    };
+                    return;
+                }
+            }
+
+            guestLinks.style.display = "flex";
+            userPanel.style.display = "none";
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalDetails = document.getElementById('modalDetails');
+            const closeBtn = modal.querySelector('.modal-close');
+
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', () => openModal(card));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openModal(card);
+                    }
+                });
+            });
+
+            function openModal(card) {
+                const img = card.querySelector('img');
+                const photographer = card.querySelector('.card-body h4').innerText;
+
+                modalImg.src = img.src;
+                modalImg.alt = `Large view of image by ${photographer.replace('Photographer: ', '')}`;
+                modalDetails.innerText = photographer;
+                modal.style.display = 'flex';
+                modal.focus();
+            }
+
+            function closeModal() {
+                modal.style.display = 'none';
+                modalImg.src = '';
+                modalImg.alt = '';
+            }
+
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === "Escape" &amp;&amp; modal.style.display === 'flex') {
+                    closeModal();
+                }
+            });
+        });
+         function filterPhotographers() {
+            const specialization = document.getElementById("specialization").value;
+            const minExperience = document.getElementById("minExperience").value;
+            const maxCharge = document.getElementById("maxCharge").value;
+            const sortOrder = document.getElementById("sortOrder").value;
+
+            let url = "http://localhost:8080/Photographer/api/photographers/filter?";
+            if (specialization) url += "specialization=" + encodeURIComponent(specialization) + "&amp;";
+            if (minExperience) url += "minExperience=" + encodeURIComponent(minExperience) + "&amp;";
+            if (maxCharge) url += "maxCharge=" + encodeURIComponent(maxCharge) + "&amp;";
+            if (sortOrder) url += "sort=" + encodeURIComponent(sortOrder);
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("HTTP error " + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.length === 0) {
+                        alert("No photographers found");
+                        return;
+                    }
+
+                    const ids = data.map(p => p.photographerID);
+                    const idString = ids.join(",");
+
+                    document.getElementById("galleryForm:photographerIdInput").value = idString;
+                    document.getElementById("galleryForm:loadBtn").click();
+                })
+                .catch(error => {
+                    alert("Error: " + error.message);
+                    console.error(error);
+                });
+        }
+    </script>
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-column">
+        
+      <h3>PixelFrame Studio</h3>
+      <p>Your moments, beautifully captured. Trusted by hundreds of clients worldwide.</p>
+    </div>
+    <div class="footer-column">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="home.xhtml">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h4>Connect With Us</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>copy; 2025 PixelFrame Studio. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: #fff;
+    padding: 40px 20px 20px;
+    margin-top: 60px;
+  }
+
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 40px;
+  }
+
+  .footer-column h3, .footer-column h4 {
+    margin-bottom: 15px;
+    color: #ff4b2b;
+  }
+
+  .footer-column p, .footer-column ul, .footer-bottom p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ccc;
+  }
+
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer-column ul li {
+    margin-bottom: 10px;
+  }
+
+  .footer-column ul li a {
+    color: #ccc;
+    text-decoration: none;
+  }
+
+  .footer-column ul li a:hover {
+    color: #fff;
+  }
+
+  .social-icons a {
+    margin-right: 10px;
+    color: #ccc;
+    font-size: 18px;
+    transition: color 0.3s;
+  }
+
+  .social-icons a:hover {
+    color: #ff4b2b;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #444;
+    padding-top: 15px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+</style>
+</h:body>
+</html>

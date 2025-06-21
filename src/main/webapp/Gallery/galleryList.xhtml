@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Gallery List</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #f0f4f8;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .top-bar {
+            max-width: 1100px;
+            margin: 0 auto 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 8px 15px rgba(37, 117, 252, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .button:hover {
+            background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+            box-shadow: 0 12px 25px rgba(101, 67, 247, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #d1dbe6;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(100, 110, 120, 0.1);
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            height: 380px;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 30px rgba(70, 80, 90, 0.2);
+            transform: translateY(-7px);
+        }
+
+        .card img, h\:graphicImage {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-bottom: 1.5px solid #e2e8f0;
+            border-radius: 18px 18px 0 0;
+        }
+
+        .card-body {
+            padding: 18px 22px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .card-body h4 {
+            font-size: 21px;
+            font-weight: 600;
+            margin: 12px 0 18px;
+            color: #2c3e50;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .card-actions h\:commandButton {
+            padding: 11px 28px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 9px rgba(0, 123, 255, 0.4);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #3498db;
+            color: white;
+        }
+
+        .card-actions h\:commandButton[value='Delete'] {
+            background-color: #e74c3c;
+            box-shadow: 0 4px 9px rgba(231, 76, 60, 0.4);
+        }
+
+        .card-actions h\:commandButton:hover {
+            background-color: #2980b9;
+            box-shadow: 0 6px 15px rgba(41, 128, 185, 0.6);
+        }
+
+        .card-actions h\:commandButton[value='Delete']:hover {
+            background-color: #c0392b;
+            box-shadow: 0 6px 15px rgba(192, 57, 43, 0.6);
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <h1 style="text-align:center;">Gallery List</h1>
+
+    <!-- Top bar with Home and Create New buttons -->
+    <div class="top-bar">
+        <!-- Home Button -->
+        <h:link outcome="home" styleClass="button" value="Home" />
+
+        <!-- Create New Button -->
+        <h:form>
+            <h:commandButton value="Create New" 
+                             styleClass="button" 
+                             action="#{galleryController.prepareCreate}" />
+        </h:form>
+    </div>
+
+    <!-- Gallery Grid -->
+   <!-- Gallery Grid -->
+<div class="gallery-container">
+    <ui:repeat value="#{galleryListBean.galleryImages}" var="item">
+        <div class="card">
+            <h:graphicImage value="#{item.imagePath}" alt="Image Not Found" />
+            <div class="card-body">
+                <h4>Photographer ID: #{item.photographerID}</h4>
+
+                <div class="card-actions">
+                    <h:form prependId="false">
+                        <h:commandButton value="Delete"
+                                         action="#{galleryController.deleteGallery(item)}"
+                                         onclick="return confirm('Are you sure you want to delete this image?');" />
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:repeat>
+</div>
+
+</h:body>
+</html>

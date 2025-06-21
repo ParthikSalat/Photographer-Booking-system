@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Upload Gallery Image</title>
+</h:head>
+<h:body>
+    <h2>Register Gallery Image</h2>
+
+    <h:form enctype="multipart/form-data">
+        <!-- File Upload -->
+        <h:outputLabel for="fileUpload" value="Select Image File:" /><br />
+        <h:inputFile id="fileUpload" value="#{galleryController.uploadedFile}" required="true" /><br /><br />
+
+        <!-- Photographer ID -->
+        <h:outputLabel for="photographerID" value="Photographer ID:" /><br />
+        <h:inputText id="photographerID" value="#{galleryController.selectedPhotographerID}" required="true">
+            <f:validateLongRange minimum="1" />
+        </h:inputText><br /><br />
+
+        <!-- Submit Button -->
+        <h:commandButton value="Submit" action="#{galleryController.createGallery}" />
+
+    </h:form>
+
+    <h:messages style="color: red;" />
+</h:body>
+</html>

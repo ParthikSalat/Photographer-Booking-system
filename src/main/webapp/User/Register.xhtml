@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>User Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('../images/bg2.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .form-container {
+            position: relative;
+            max-width: 800px;
+            margin: 80px auto 40px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #555;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #007B8A;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0;
+            color: #007B8A;
+        }
+
+        .form-header p {
+            color: #555;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        #address {
+            grid-column: span 2;
+        }
+
+        .form-actions {
+            grid-column: span 2;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            background-color: #007B8A;
+            color: white;
+            font-weight: bold;
+            padding: 12px 30px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .action-button:hover {
+            background-color: #005f6b;
+            transform: translateY(-2px);
+        }
+
+        .reset-button {
+            background-color: #6c757d;
+        }
+
+        .reset-button:hover {
+            background-color: #5a6268;
+        }
+
+        @media screen and (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            #address {
+                grid-column: span 1;
+            }
+
+            .form-container {
+                margin: 60px 20px;
+                padding: 25px;
+            }
+
+            .close-button {
+                font-size: 20px;
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+
+    <script type="text/javascript">
+//<![CDATA[
+    function isValidEmail(email) {
+        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return pattern.test(email);
+    }
+
+    function isValidPhoneNumber(phone) {
+        const pattern = /^[6-9]\d{9}$/;
+        return pattern.test(phone);
+    }
+
+    async function registerUser(event) {
+        event.preventDefault();
+
+        const fullName = document.getElementById("fullName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const phoneNumber = document.getElementById("phoneNumber").value.trim();
+        const address = document.getElementById("address").value.trim();
+
+        if (!fullName) {
+            alert("Full Name is required.");
+            return false;
+        }
+
+        if (!email || !isValidEmail(email)) {
+            alert("Valid Email is required.");
+            return false;
+        }
+
+        if (!password || password.length < 6) {
+            alert("Password must be at least 6 characters.");
+            return false;
+        }
+
+        if (!phoneNumber || !isValidPhoneNumber(phoneNumber)) {
+            alert("Valid Phone Number is required (10 digits starting with 6-9).");
+            return false;
+        }
+
+        if (!address) {
+            alert("Address is required.");
+            return false;
+        }
+
+        const user = {
+            fullName,
+            email,
+            passwordHash: password,
+            phoneNumber,
+            address
+        };
+
+        try {
+            const response = await fetch('/Photographer/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            });
+
+            const message = await response.text();
+            alert("Registration Completed");
+            window.location.href = "http://localhost:8080/Photographer/User/Login.xhtml";
+        } catch (error) {
+            alert("Error: " + error.message);
+        }
+
+        return false;
+    }
+
+    function goBack() {
+        window.location.href = '/Photographer/home.xhtml';
+    }
+//]]>
+</script>
+
+</head>
+<body>
+
+<div class="form-container">
+    <button class="close-button" onclick="goBack()">&#10005;</button>
+
+    <div class="form-header">
+        <h2>Create Your Account 👤</h2>
+        <p>Join us today and get started!</p>
+    </div>
+
+    <form onsubmit="registerUser(event)">
+        <div>
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" required="true" />
+        </div>
+
+        <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" required="true" />
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" required="true" />
+        </div>
+
+        <div>
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" id="phoneNumber" required="true" />
+        </div>
+
+        <div>
+            <label for="address">Address</label>
+            <textarea id="address" rows="4" required="true"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="action-button">Register</button>
+            <button type="reset" class="action-button reset-button">Reset</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

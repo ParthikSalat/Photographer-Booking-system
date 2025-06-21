@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Photographer Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('../images/bg2.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            animation: fadeIn 0.6s ease-in-out;
+            position: relative;
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #007B8A;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        h4 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #666;
+            font-weight: normal;
+            font-size: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #007B8A;
+            outline: none;
+        }
+
+        input[type="submit"],
+        .btn-login {
+            width: 100%;
+            background: #007B8A;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover,
+        input[type="submit"]:hover {
+            background: #005f6b;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .success-message {
+            color: green;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        a {
+            color: #007B8A;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Shake animation */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            h4 {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="container" id="loginBox">
+        <span class="close-btn" title="Go Back" onclick="window.location.href = '/Photographer/home.xhtml';">×</span>
+
+        <h2>Photographer Login</h2>
+        <h4>Capture moments, log in to manage your shoots</h4>
+
+        <div id="message"></div>
+
+        <form id="loginForm">
+            <label for="email">Username</label>
+            <input type="text" id="email" name="email" placeholder="Enter your email" required="required" />
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required="required" />
+
+            <input type="submit" value="Login" class="btn-login" />
+        </form>
+
+        <p style="margin-top: 15px; text-align: center;">
+            Don't have an account? 
+            <a href="/Photographer/Photographer/Register.xhtml">Register here</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        fetch("http://localhost:8080/Photographer/api/photographers/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                passwordHash: password
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(error => { throw new Error("Invalid email or password"); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("JWT Token:", data.token);
+            localStorage.setItem("jwtToken", data.token);
+
+            document.getElementById("message").innerHTML =
+                `<p class="success-message">Login successful! Redirecting...</p>`;
+
+            setTimeout(() => {
+                window.location.href = "http://localhost:8080/Photographer/Photographer/Dashboard.xhtml";
+            }, 1000);
+        })
+        .catch(error => {
+            console.error("Login error:", error.message);
+            const messageBox = document.getElementById("message");
+            const loginBox = document.getElementById("loginBox");
+
+            messageBox.innerHTML = `<p class="error-message">🚫 ${error.message}</p>`;
+            loginBox.classList.add("shake");
+
+            setTimeout(() => {
+                loginBox.classList.remove("shake");
+            }, 500);
+        });
+    });
+</script>
+</body>
+</html>
